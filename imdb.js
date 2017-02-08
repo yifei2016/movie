@@ -14,24 +14,30 @@ window.addEventListener('load',function(event){
 		 	method: GET
 		 	query: t: 'movie_title', r: 'json'
 		 */
-		 //initialize a request object that is a Ajax
-		let req = new XMLHttpRequest();
+		
+		//initialize a request object that is a Ajax
+		let req = new XMLHttpRequest(),
+			method = "GET",
+    		url = "http://www.omdbapi.com/?t=" + exampleInputAmount.value + "&y=&plot=short&r=json";
+    	//tell the request object what method to use and url adress and query string 
+    	//req.open('GET', 'https://www.omdbapi.com/?t=' + inputValue +'&y=&plot=short&r=json');
+		req.open(method, url,true);
+
 		//under line: wait the response from the server 
-		req.onreadystatechange = function(event) {
-			if( req.readyState == 4 ) {
+		req.onreadystatechange = function(){
+			if(req.readyState === XMLHttpRequest.DONE && req.status === 200){
 				spinner.style.display = "none";
 				searchButton.disabled = false;
+				let res = JSON.parse(req.responseText);
+				//res.Actors;
+				//console.log(res.Actors);
 				let container = document.getElementById('responseContainer');
-				while (container.firstChild) {
- 			  	 	container.removeChild(container.firstChild);
+
+				while (container.firstChild){
+					container.removeChild(container.firstChild);
 				}
 
-				let res = JSON.parse(req.responseText);
-				
-				//console.log("success"); on the console you will see this message
 				let div = document.createElement('div');// <div></div>
-				
-				
 				let data = '<p><span class="pull-right">'+ res.Title +'</span><span>Title</span></p>'
 				+ '<p><span class="pull-right">'+ res.Released +'</span><span>Released</span></p>'
 				+ '<p><span class="pull-right">'+ res.imdbRating +'</span><span>Rating</span></p>'
@@ -42,16 +48,31 @@ window.addEventListener('load',function(event){
 				div.innerHTML = data;
 				container.appendChild(div);
 
-			} 
+
+				let image = document.createElement('IMG'); // ->  <img >
+				image.setAttribute("src", res.Poster);
+				//image.setAttribute("width", "404");
+    			//image.setAttribute("height", "528");
 				
-				
-		};
-		//tell the request object method to use and url adress and query string 
-		req.open('GET', 'https://www.omdbapi.com/?t=' + inputValue +'&y=&plot=short&r=json');
-		//set the request header to only accept json response 
-		req.setRequestHeader("Accept", "application/json");
+				container.appendChild(image);
+
+			}
+		}
+
+
+        
+
+
+		
+		
+
+
+		
 		//send it over 
 		req.send();
+		//set the request header to only accept json response 
+		//req.setRequestHeader("Accept", "application/json");
+		
 	})
 	
 })
